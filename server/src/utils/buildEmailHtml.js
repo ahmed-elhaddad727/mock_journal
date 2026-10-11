@@ -1,5 +1,6 @@
+// server.js — updated buildEmailHtml function
 
-export default function buildEmailHtml(studentName, school, result, questions, answers) {
+function buildEmailHtml(studentName, school, result, questions, answers) {
   const esc = (s) =>
     String(s)
       .replace(/&/g, "&amp;")
@@ -18,11 +19,9 @@ export default function buildEmailHtml(studentName, school, result, questions, a
 
   /* ── Score → color mapping ── */
   const scoreColor = (score) => {
-    if (score >= 80)
-      return { bg: "#059669", label: "Excellent", light: "#d1fae5" };
+    if (score >= 80) return { bg: "#059669", label: "Excellent", light: "#d1fae5" };
     if (score >= 60) return { bg: "#2563eb", label: "Good", light: "#dbeafe" };
-    if (score >= 40)
-      return { bg: "#d97706", label: "Needs Improvement", light: "#fef3c7" };
+    if (score >= 40) return { bg: "#d97706", label: "Needs Improvement", light: "#fef3c7" };
     return { bg: "#dc2626", label: "Requires Attention", light: "#fee2e2" };
   };
 
@@ -48,7 +47,7 @@ export default function buildEmailHtml(studentName, school, result, questions, a
               <span style="display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;color:#fff;background:${typeColors[m.type] || "#3b82f6"};">${esc(m.type)}</span>
             </td>
             <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#475569;">${esc(m.explanation)}</td>
-          </tr>`,
+          </tr>`
               )
               .join("")
           : `<tr><td colspan="4" style="padding:16px;text-align:center;color:#059669;font-weight:600;">✓ No mistakes found — excellent work!</td></tr>`;
