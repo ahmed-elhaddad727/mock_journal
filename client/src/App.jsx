@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
+https://mock-journal-server.vercel.app/
 /* ── Configuration ─────────────────────────────────────────────────────── */
-const API_URL = "https://mock-journal.vercel.app/api/submit-assessment";
+const API_URL = "https://mock-journal-server.vercel.app/api/submit-assessment";
 
 const questions = [
   "After entering STEM schools, the study system changed, and the project took up a significant amount of your usual study time. Explain how you organize your time between studying different subjects and working on the project.",
