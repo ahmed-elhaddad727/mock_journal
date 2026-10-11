@@ -15,9 +15,9 @@ export default function Footer() {
           <span className="text-slate-500"> · Behaira S&apos;28</span>
         </p>
 
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+        {/* <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
           Ahmed — Lead Developer & Bug Negotiator
-        </span>
+        </span> */}
       </div>
     </footer>
   );
