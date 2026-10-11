@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-https://mock-journal-server.vercel.app/
 /* ── Configuration ─────────────────────────────────────────────────────── */
 const API_URL = "https://mock-journal-server.vercel.app/api/submit-assessment";
 
