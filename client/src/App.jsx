@@ -437,7 +437,7 @@ export default function WritingAssessmentForm() {
     };
 
     try {
-      const res = await fetch(proccess.env.API_URL, {
+      const res = await fetch(process.env.API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
