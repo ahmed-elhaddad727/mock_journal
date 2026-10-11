@@ -12,7 +12,9 @@ import buildPrompt from "../src/utils/promptBuilder.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
 /* ── Start Server ─────────────────────────────────────────────────────── */
 const PORT = process.env.PORT || 3001;
 
