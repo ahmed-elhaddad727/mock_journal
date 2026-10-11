@@ -62,7 +62,7 @@ app.post("/api/submit-assessment", async (req, res) => {
   try {
     // ── Step 1: Send to Gemini for correction ──
     const model = genAI.getGenerativeModel({
-      model: "models/gemini-3.8-flash",
+      model: "models/gemini-3.5-flash-lite",
       generationConfig: {
         responseMimeType: "application/json",
       },
