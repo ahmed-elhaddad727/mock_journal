@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
+const API_URL="https://mock-journal-server.vercel.app/api/submit-assessment"
 const questions = [
   "After entering STEM schools, the study system changed, and the project took up a significant amount of your usual study time. Explain how you organize your time between studying different subjects and working on the project.",
   "During the research step of the Engineering Design Process, explain how will studying existing methods, technologies, or real-world examples help you generate ideas, and improve your energy system design. ",
@@ -437,7 +437,7 @@ export default function WritingAssessmentForm() {
     };
 
     try {
-      const res = await fetch(process.env.API_URL, {
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
