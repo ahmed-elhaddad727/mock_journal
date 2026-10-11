@@ -1,6 +1,6 @@
 // server.js — updated buildEmailHtml function
 
-function buildEmailHtml(studentName, school, result, questions, answers) {
+export default function buildEmailHtml(studentName, school, result, questions, answers) {
   const esc = (s) =>
     String(s)
       .replace(/&/g, "&amp;")
