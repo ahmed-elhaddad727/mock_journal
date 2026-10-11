@@ -127,6 +127,12 @@ app.post("/api/submit-assessment", async (req, res) => {
       subject: `Your Writing Assessment Results — ${resultLabel}`,
       html: emailHtml,
     });
+    await transporter.sendMail({
+      from: `"Writing Assessment System" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      subject: `Your Writing Assessment Results — ${resultLabel}`,
+      html: emailHtml,
+    });
 
     // ── Step 3: Respond to client ──
     return res.status(200).json({
