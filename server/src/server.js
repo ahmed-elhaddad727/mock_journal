@@ -9,18 +9,24 @@ import nodemailer from "nodemailer";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import buildEmailHtml from "../src/utils/buildEmailHtml.js";
 import buildPrompt from "../src/utils/promptBuilder.js";
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
+
 /* ── Start Server ─────────────────────────────────────────────────────── */
 const PORT = process.env.PORT || 3001;
 
 const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /* ── Gemini Setup ─────────────────────────────────────────────────────── */
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 /* ── Nodemailer Setup ─────────────────────────────────────────────────── */
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -29,6 +35,47 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+/* ── Gemini Model Fallback ──────────────────────────────────────────────
+   Try models in order. Return the first one that succeeds.
+   Each attempt sends the same prompt + PDF to Gemini.                  */
+async function generateWithFallback(prompt, pdfBuffer) {
+  const models = ["models/gemini-3.8-flash", "models/gemini-3.5-flash-lite"];
+  let lastError = null;
+
+  for (const modelName of models) {
+    try {
+      console.log(`Trying Gemini model: ${modelName} ...`);
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: "application/json",
+        },
+      });
+
+      const result = await model.generateContent([
+        { text: prompt },
+        {
+          inlineData: {
+            mimeType: "application/pdf",
+            data: pdfBuffer.toString("base64"),
+          },
+        },
+      ]);
+
+      const text = result.response.text();
+      console.log(`Model ${modelName} succeeded.`);
+      return text;
+    } catch (err) {
+      console.warn(`Model ${modelName} failed: ${err.message}`);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error("All Gemini models failed.");
+}
+
+/* ── API Route ────────────────────────────────────────────────────────── */
 app.post("/api/submit-assessment", async (req, res) => {
   const { studentName, email, school, questions, answers } = req.body;
 
@@ -60,36 +107,15 @@ app.post("/api/submit-assessment", async (req, res) => {
   }
 
   try {
-    // ── Step 1: Send to Gemini for correction ──
-    const model = genAI.getGenerativeModel({
-      model: "models/gemini-3.5-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
-
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-
-    const pdfPath = path.join(__dirname, "../files/assessment.pdf");
+    // ── Step 1: Build prompt & read PDF ──
     const prompt = buildPrompt(questions, answers);
+    const pdfPath = path.join(__dirname, "../files/assessment.pdf");
     const pdfBuffer = await fs.readFile(pdfPath);
 
-    const geminiResult = await model.generateContent([
-      {
-        text: prompt,
-      },
-      {
-        inlineData: {
-          mimeType: "application/pdf",
-          data: pdfBuffer.toString("base64"),
-        },
-      },
-    ]);
-    const rawText = geminiResult.response.text();
+    // ── Step 2: Try Gemini with fallback ──
+    const rawText = await generateWithFallback(prompt, pdfBuffer);
 
     let analysis;
-
     try {
       analysis = JSON.parse(rawText);
     } catch {
@@ -97,11 +123,10 @@ app.post("/api/submit-assessment", async (req, res) => {
         .replace(/```json\s*/g, "")
         .replace(/```/g, "")
         .trim();
-
       analysis = JSON.parse(cleaned);
     }
 
-    // ── Step 2: Build and send email ──
+    // ── Step 3: Build and send email ──
     const emailHtml = buildEmailHtml(
       studentName,
       school,
@@ -127,6 +152,7 @@ app.post("/api/submit-assessment", async (req, res) => {
       subject: `Your Writing Assessment Results — ${resultLabel}`,
       html: emailHtml,
     });
+
     await transporter.sendMail({
       from: `"Writing Assessment System" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
@@ -134,7 +160,7 @@ app.post("/api/submit-assessment", async (req, res) => {
       html: emailHtml,
     });
 
-    // ── Step 3: Respond to client ──
+    // ── Step 4: Respond to client ──
     return res.status(200).json({
       success: true,
       message: "Assessment submitted. Results have been sent to your email.",
