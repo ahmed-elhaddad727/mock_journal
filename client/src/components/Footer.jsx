@@ -7,7 +7,7 @@ export default function Footer() {
         <p className="text-center text-sm text-slate-500 sm:text-base">
           Developed & Powered by{" "}
           <span className="font-semibold italic text-blue-600">
-            <a href="https://ahmed-elhaddad.vercel.app/">Ahmed Elhaddad</a>
+            <a href="https://ahmed-elhaddad.vercel.app/">Ahmed Elhadad</a>
           </span>
           <span className="text-slate-500"> · Behaira S&apos;29</span>
         </p>
