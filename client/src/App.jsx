@@ -35,6 +35,7 @@ const stemSchools = [
   "STEM School Monufia",
   "STEM School Qalyubia",
   "STEM School Damietta",
+  "STEM School Luxor",
   "Other",
 ];
 
