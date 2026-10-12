@@ -13,6 +13,7 @@ const questions = [
 ];
 
 const stemSchools = [
+  "STEM School Kafr El-Sheikh",
   "STEM School Alexandria",
   "STEM School Cairo",
   "STEM School Giza",
@@ -28,7 +29,6 @@ const stemSchools = [
   "STEM School Suez",
   "STEM School Beni Suef",
   "STEM School Fayoum",
-  "STEM School Kafr El-Sheikh",
   "STEM School Beheira",
   "STEM School Gharbia",
   "STEM School Sharqia",
